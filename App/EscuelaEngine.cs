@@ -33,14 +33,31 @@ namespace CoreEscuela
                 Printer.WriteTitle($"{objDic.Key}");
 
                 foreach (var val in objDic.Value)
-                {
-                    if(!(val is Evaluacion) || imprEval)
+                {   
+                     switch (objDic.Key)
                     {
-                        Console.WriteLine(val);
-                    }else if(val is Escuela){
-                        Console.WriteLine("Escuels: " + val);
-                    }else if(val is Alumno){
-                        Console.WriteLine("Alumno: " + val.Nombre);
+                        case LlaveDiccionario.Evaluacion: 
+                            if(imprEval){
+                                Console.WriteLine(val);
+                            }               
+                        break;
+                        case LlaveDiccionario.Escuela:
+                            Console.WriteLine("Escuela: " + val);
+                        break;
+                        case LlaveDiccionario.Alumno:
+                            Console.WriteLine("Alumno: " + val.Nombre);
+                        break;
+                        case LlaveDiccionario.Curso:
+                            var curtem = val as Curso;
+                            if(curtem != null){
+                                int count = curtem.Alumnos.Count;
+                                Console.WriteLine("Curso: " + val.Nombre + "Cantidad De Alumnos: " + count);
+                            }
+                            
+                        break;
+                        default:
+                            Console.WriteLine(val);
+                        break;
                     }
                 }
             }
@@ -166,21 +183,20 @@ namespace CoreEscuela
         private void CargarEvaluaciones()
         {
             var lista = new List<Evaluacion>();
+            var rnd = new Random();
             foreach (var curso in Escuela.Cursos)
             {
                 foreach (var asignatura in curso.Asignaturas)
                 {
                     foreach (var alumno in curso.Alumnos)
                     {
-                        var rnd = new Random(System.Environment.TickCount);
-
                         for (int i = 0; i < 5; i++)
                         {
                             var ev = new Evaluacion
                             {
                                 Asignatura = asignatura,
                                 Nombre = $"{asignatura.Nombre} Ev#{i + 1}",
-                                Nota = (float)(5 * rnd.NextDouble()),
+                                Nota = MathF.Round(5 *(float)rnd.NextDouble(),2),
                                 Alumno = alumno
                             };
                             alumno.Evaluaciones.Add(ev);
