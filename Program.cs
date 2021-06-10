@@ -5,32 +5,24 @@ using CoreEscuela.Entidades;
 using CoreEscuela.Util;
 using static System.Console;
 
-namespace CoreEscuela
+namespace CoreEscuela.App
 {
     class Program
     {
         static void Main(string[] args)
         {   
             AppDomain.CurrentDomain.ProcessExit += AccionDelEvento;
+            AppDomain.CurrentDomain.ProcessExit += (o, s) => Printer.Beep(2000, 100, 1);
 
             var engine = new EscuelaEngine();
             engine.Inicializar();
             Printer.WriteTitle("BIENVENIDOS A LA ESCUELA");
-            //Printer.Beep(10000, cantidad:10);
-            ImpimirCursosEscuela(engine.Escuela);
 
-            Dictionary<int, string> diccionario = new Dictionary<int, string>();
-
-            diccionario.Add(10, "jsreyesg");
-            diccionario.Add(23, "Elsa patito");
-
-            foreach (var keyValPair in diccionario)
-            {
-                WriteLine($"Key: {keyValPair.Key} value: {keyValPair.Value}");
-            }
-
-            var dictmp = engine.GetDiccionarioObjetos();
-            engine.ImprimirDiccionario(dictmp, true);
+            var reporteador = new Reporteador(engine.GetDiccionarioObjetos());
+            var evalList = reporteador.GetListaEvaluaciones();
+            var listaAsg = reporteador.GetListaAsignaturas();
+            var listaEvalXAsig = reporteador.GetDicEvaluaXAsig();
+            var listaPromXAsig = reporteador.GetPromeAlumnPorAsignatura();
         }
 
         private static void AccionDelEvento(object sender, EventArgs e)
